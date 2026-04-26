@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+  text-align:center;
+  font-family:Arial;
+}
+button{
+  width:90px;
+  height:90px;
+  font-size:30px;
+  margin:10px;
+}
+.connect{
+  width:200px;
+  height:50px;
+  font-size:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Bluetooth Car Remote</h2>
+
+<button class="connect" onclick="connect()">Connect</button>
+
+<br><br>
+
+<div>
+<button onclick="send('F')">↑</button>
+</div>
+
+<div>
+<button onclick="send('L')">←</button>
+<button onclick="send('S')">■</button>
+<button onclick="send('R')">→</button>
+</div>
+
+<div>
+<button onclick="send('B')">↓</button>
+</div>
+
+<script>
+
+let characteristic;
+
+async function connect(){
+
+const device = await navigator.bluetooth.requestDevice({
+filters:[{namePrefix:'HM'}],
+optionalServices:['ffe0']
+});
+
+const server = await device.gatt.connect();
+
+const service = await server.getPrimaryService('ffe0');
+
+characteristic = await service.getCharacteristic('ffe1');
+
+alert("Connected");
+
+}
+
+function send(cmd){
+
+let encoder = new TextEncoder();
+characteristic.writeValue(encoder.encode(cmd));
+
+}
+
+</script>
+
+</body>
+</html>
