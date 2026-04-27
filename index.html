@@ -50,7 +50,7 @@ let characteristic;
 async function connect(){
 
 const device = await navigator.bluetooth.requestDevice({
-filters:[{namePrefix:'HM'}],
+acceptAllDevices: true,
 optionalServices:['ffe0']
 });
 
@@ -60,12 +60,17 @@ const service = await server.getPrimaryService('ffe0');
 
 characteristic = await service.getCharacteristic('ffe1');
 
-alert("Connected");
+alert("Bluetooth Connected!");
 
 }
 
 function send(cmd){
 
+if(!characteristic){
+alert("Please connect Bluetooth first!");
+return;
+}
+  
 let encoder = new TextEncoder();
 characteristic.writeValue(encoder.encode(cmd));
 
